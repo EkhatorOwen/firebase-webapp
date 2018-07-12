@@ -5,6 +5,8 @@
   "dependencies": {
     "dotenv": "^6.0.0",
     "firebase": "^5.2.0",
+    "image-compressor.js": "^1.1.4",
+    "jimp": "^0.2.27",
     "lodash": "^4.17.10",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

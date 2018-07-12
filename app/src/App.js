@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import firebase from './firebase'
 import FileUploader from 'react-firebase-file-uploader'
+import jimp from 'jimp'
 
 import logo from './logo.svg';
 import './App.css';
@@ -12,6 +13,9 @@ class App extends Component {
     this.state={
       images: [],
       count: 0,
+      file: '',
+      imgUrl: '',
+      jimp: ''
 
     }
     
@@ -37,6 +41,21 @@ class App extends Component {
 
   upload=()=>{
       
+  }
+
+  _handleImageChange=(e)=>{
+    
+    let reader = new FileReader()
+    let img =e.target.files[0];
+    //   console.log(img.name)
+    
+    reader.onloadend=()=>{
+      this.setState({
+        file:img,
+        imgUrl: reader.result
+      })
+    }
+      reader.readAsDataURL(img)
   }
 
   remove =(index)=>{
@@ -66,7 +85,10 @@ class App extends Component {
         storageRef={firebase.storage().ref('profile')}
         onUploadSuccess={this.handleUploadSuccess}
         />
-        <button onClick={this.upload} >Upload</button>
+        <img src={this.state.imgUrl} height="150" width="150" />
+        <p>yep yep</p>
+        <input type="file" onChange={e=>this._handleImageChange(e)}  />
+        <button onClick={this.upload} >Save</button>
       </div>
     );
   }

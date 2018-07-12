@@ -25,7 +25,7 @@ class App extends Component {
         .then(url=> {
           console.log(url)
           let img = this.state.images.slice();
-                let id = 99;
+                let id = 88;
               img.push({
                 id: id,
                 url: url

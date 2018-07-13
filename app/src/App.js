@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import firebase from './firebase'
 import FileUploader from 'react-firebase-file-uploader'
-import jimp from 'jimp'
-
+import ImageCompressor from 'image-compressor.js'
 import logo from './logo.svg';
 import './App.css';
 
@@ -15,10 +14,17 @@ class App extends Component {
       count: 0,
       file: '',
       imgUrl: '',
-      jimp: ''
-
+      jimp: '',
+      files: [],
+      things: []
     }
     
+  }
+
+  startUploadManually =()=>{
+    this.state.things.forEach(element=>{
+      this.FileUploader.startUpload(element)
+    })
   }
   handleUploadSuccess=filename=>{
     firebase
@@ -42,20 +48,52 @@ class App extends Component {
   upload=()=>{
       
   }
-
-  _handleImageChange=(e)=>{
-    
+  
+  _handleImageChange=(e)=>{ 
+    let arr = []
+    let id = 7;
     let reader = new FileReader()
     let img =e.target.files[0];
-    //   console.log(img.name)
+    console.log('normal img ', img)
+      let test = [];
+      test = this.state.images.slice();
+      test.push(img)
+      this.setState({images: test})
+
+    const formData = new FormData();
+    let that = this;
+   new  ImageCompressor(img, {
+      quality: .3,//signifies how much quality you want on the photo
+      success(result) {
+      let newArr =   that.state.things.slice();
+      console.log('image arr after resize ',result)
+        newArr.push(result)
+       that.setState({
+         things: newArr
+       })
+      }
+   })
+   
+
+
+   reader.addEventListener("load",()=>{
+       arr = this.state.files.slice();
+       id++    
+       arr.push({
+         id: id,
+         url: reader.result,
+       })
+
+       this.setState({
+         imgUrl:reader.result,
+         files: arr
+       }) 
+   })
+
+
+    reader.readAsDataURL(img)
     
-    reader.onloadend=()=>{
-      this.setState({
-        file:img,
-        imgUrl: reader.result
-      })
-    }
-      reader.readAsDataURL(img)
+    
   }
 
   remove =(index)=>{
@@ -69,7 +107,7 @@ class App extends Component {
    
   }
   render() {
-    console.log(this.state.images)
+   
     return (
       <div className="App">
         <header className="App-header">
@@ -77,18 +115,20 @@ class App extends Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
        
-        {this.state.images && this.state.images.map((element,index)=>{return (<img onClick={()=>this.remove(index)} key={index} src={element.url} height="100" width="100" />)})}
+       
         <FileUploader 
         //hidden -> this prop hides the defualt button. you can then wrap it in a custom label tag
         accept="image/*"
         name="avatar"
         storageRef={firebase.storage().ref('profile')}
-        onUploadSuccess={this.handleUploadSuccess}
+        onChange={e=>this._handleImageChange(e)}
+        ref ={instance=>{this.FileUploader=instance}}
         />
-        <img src={this.state.imgUrl} height="150" width="150" />
+       {this.state.files && this.state.files.map((element,index)=>(<img key={index} src={element.url} height="200"  />))}
+      
         <p>yep yep</p>
-        <input type="file" onChange={e=>this._handleImageChange(e)}  />
-        <button onClick={this.upload} >Save</button>
+        {/* <input multiple type="file" onChange={e=>this._handleImageChange(e)}  /> */}
+        <button onClick={this.startUploadManually} >Save</button>
       </div>
     );
   }

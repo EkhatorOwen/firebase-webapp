@@ -22,11 +22,11 @@ class App extends Component {
   }
 
   startUploadManually =()=>{
+   // firebase.storage().ref('profile').child('7_Discover.png').getDownloadURL().then(url=>console.log(url))
     this.state.things.forEach(element=>{
       console.log(element)
-      this.FileUploader.startUpload(element)
-           firebase.storage().ref('profile').child(element.name).getDownloadURL().then(url=>{console.log(url)})
-                
+      console.log(element.name)
+      this.FileUploader.startUpload(element)       
     })
   }
   handleUploadSuccess=filename=>{
@@ -37,14 +37,14 @@ class App extends Component {
         .getDownloadURL()
         .then(url=> {
           console.log(url)
-          let img = this.state.images.slice();
-                let id = 88;
-              img.push({
-                id: id,
-                url: url
-              })
-              id++
-              this.setState({images: img})
+          // let img = this.state.images.slice();
+          //       let id = 88;
+          //     img.push({
+          //       id: id,
+          //       url: url
+          //     })
+          //     id++
+          //     this.setState({images: img})
         })
   }
 
@@ -126,6 +126,7 @@ class App extends Component {
         storageRef={firebase.storage().ref('profile')}
         onChange={e=>this._handleImageChange(e)}
         ref ={instance=>{this.FileUploader=instance}}
+        onUploadSuccess={this.handleUploadSuccess}
         />
        {this.state.files && this.state.files.map((element,index)=>(<img key={index} src={element.url} height="200"  />))}
       

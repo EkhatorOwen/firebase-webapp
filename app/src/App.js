@@ -23,7 +23,10 @@ class App extends Component {
 
   startUploadManually =()=>{
     this.state.things.forEach(element=>{
+      console.log(element)
       this.FileUploader.startUpload(element)
+           firebase.storage().ref('profile').child(element.name).getDownloadURL().then(url=>{console.log(url)})
+                
     })
   }
   handleUploadSuccess=filename=>{
@@ -60,7 +63,7 @@ class App extends Component {
       test.push(img)
       this.setState({images: test})
 
-    const formData = new FormData();
+  //  const formData = new FormData();
     let that = this;
    new  ImageCompressor(img, {
       quality: .3,//signifies how much quality you want on the photo
